@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 @RestController
 
@@ -31,20 +32,25 @@ public class MainController {
         try {
             String clientID = requestDTO.getClientId();
             char firstDigit = clientID.charAt(0);
+            String currency;
             BigDecimal maxLimit;
+            Random random = new Random();
             if (firstDigit == '8') {
                 maxLimit = new BigDecimal(2000);
+                currency = "US";
             } else if (firstDigit == '9') {
                 maxLimit = new BigDecimal(1000);
+                currency = "EU";
             } else {
                 maxLimit = new BigDecimal(10000);
+                currency = "RU";
             }
             ResponseDTO responseDTO = new ResponseDTO();
             responseDTO.setRqUID(requestDTO.getRqUID());
             responseDTO.setClientId(clientID);
             responseDTO.setAccount(requestDTO.getAccount());
-            responseDTO.setCurrency("RU");
-            responseDTO.setBalance(new BigDecimal(1234));
+            responseDTO.setCurrency(currency);
+            responseDTO.setBalance(new BigDecimal(random.nextDouble() * maxLimit.doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP));
             responseDTO.setMaxLimit(maxLimit);
 
             log.error("*********** LimitRequestDTO ***********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
